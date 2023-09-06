@@ -8,10 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -29,7 +26,7 @@ public class NoteController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String createNote(@RequestParam Map<String, String> map, HttpServletResponse response, Model model, Authentication authentication){
+    public String createNote(@RequestParam Map<String, String> map, Model model, Authentication authentication){
         User user = userService.getUser(authentication.getName());
         Integer userId = user.getUserId();
 
@@ -41,10 +38,20 @@ public class NoteController {
             model.addAttribute("fail","Note Description must not be empty.");
         }
 
-        if(userId == null){
+        if("".equals(map.get("noteId"))){
             var note = new Note(null, map.get("noteTitle"), map.get("noteDescription"), userId);
             noteService.add(note);
+        } else {
+            noteService.edit(new Note (Integer.valueOf(map.get("noteId")) , map.get("noteTitle"), map.get("noteDescription"), userId) );
         }
+        model.addAttribute("success", true);
+        return "result";
+    }
+
+    @GetMapping("/delete/{noteId}")
+    public String deleteNote(@PathVariable("noteId") Integer noteId, Model model){
+        noteService.delete(noteId);
+        model.addAttribute("delete",true);
         return "result";
     }
 }

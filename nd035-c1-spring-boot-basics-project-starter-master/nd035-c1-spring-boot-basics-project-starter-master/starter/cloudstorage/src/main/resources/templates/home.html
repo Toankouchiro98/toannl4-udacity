@@ -78,13 +78,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                <div th:if="${notes == null || notes.isEmpty()}" class="d-flex justify-content-center mt-5">
+                                    You have no notes, try adding it again !
+                                </div>
+                                    <tr th:each="note:${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button" class="btn btn-success" th:onclick="showNoteModal([[${note.noteId}]],[[${note.noteTitle}]],[[${note.noteDescription}]])">Edit</button>
+                                            <a class="btn btn-danger" th:href="@{'/notes/delete/' + ${note.noteId}}">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th th:text="${note.noteTitle}" scope="row">Example Note Title</th>
+                                        <td th:text="${note.noteDescription}">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
