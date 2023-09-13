@@ -78,9 +78,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <div th:if="${notes == null || notes.isEmpty()}" class="d-flex justify-content-center mt-5">
-                                    You have no notes, try adding it again !
-                                </div>
+                                    <div th:if="${notes == null || notes.isEmpty()}" class="d-flex justify-content-center mt-5">
+                                        No notes available.
+                                    </div>
                                     <tr th:each="note:${notes}">
                                         <td>
                                             <button type="button" class="btn btn-success" th:onclick="showNoteModal([[${note.noteId}]],[[${note.noteTitle}]],[[${note.noteDescription}]])">Edit</button>
@@ -140,14 +140,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <div th:if="${credentials == null || credentials.isEmpty()}" class="d-flex justify-content-center mt-5">
+                                    No credentials available.
+                                </div>
+                                <tr th:each="credential:${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-success" th:onclick="showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],[[${credential.username}]],[[${encryptionService.decryptValue(credential.password,credential.key)}]])">Edit</button>
+                                        <a class="btn btn-danger" th:href="@{'/credentials/delete/' + ${credential.credentialId}}">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th th:text="${credential.url}" scope="row">Example Credential URL</th>
+                                    <td th:text="${credential.username}">Example Credential Username</td>
+                                    <td th:text="${credential.password}">Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -163,7 +166,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" th:action="@{/credentials}" method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
